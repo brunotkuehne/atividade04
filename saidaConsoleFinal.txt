@@ -1,0 +1,56 @@
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kind create cluster --config configCluster.yaml
+Creating cluster "kind" ...
+ ✓ Ensuring node image (kindest/node:v1.33.1) 🖼 
+ ✓ Preparing nodes 📦 📦 📦 📦 📦 📦  
+ ✓ Writing configuration 📜 
+ ✓ Starting control-plane 🕹️ 
+ ✓ Installing CNI 🔌 
+ ✓ Installing StorageClass 💾 
+ ✓ Joining worker nodes 🚜 
+Set kubectl context to "kind-kind"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-kind
+
+Have a nice day! 👋
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl get pods
+No resources found in default namespace.
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl get nodes
+NAME                 STATUS   ROLES           AGE     VERSION
+kind-control-plane   Ready    control-plane   3m7s    v1.33.1
+kind-worker          Ready    <none>          2m53s   v1.33.1
+kind-worker2         Ready    <none>          2m53s   v1.33.1
+kind-worker3         Ready    <none>          2m53s   v1.33.1
+kind-worker4         Ready    <none>          2m52s   v1.33.1
+kind-worker5         Ready    <none>          2m52s   v1.33.1
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl apply -f nginx.yaml
+deployment.apps/nginx-deployment configured
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl get pod -o wide       
+NAME                              READY   STATUS              RESTARTS   AGE   IP           NODE           NOMINATED NODE   READINESS GATES
+nginx-deployment-96b9d695-br8ht   1/1     Running             0          66s   10.244.3.2   kind-worker3   <none>           <none>
+nginx-deployment-96b9d695-g59xv   0/1     ContainerCreating   0          26s   <none>       kind-worker5   <none>           <none>
+nginx-deployment-96b9d695-kmhh8   1/1     Running             0          66s   10.244.5.2   kind-worker4   <none>           <none>
+nginx-deployment-96b9d695-lrhm4   1/1     Running             0          66s   10.244.2.2   kind-worker2   <none>           <none>
+nginx-deployment-96b9d695-xtn8d   0/1     ContainerCreating   0          26s   <none>       kind-worker    <none>           <none>
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl taint nodes kind-worker4 apps=tipob:NoSchedule 
+node/kind-worker4 tainted
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl taint nodes kind-worker5 apps=tipob:NoSchedule
+node/kind-worker5 tainted
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl taint nodes kind-worker apps=tipoa:NoSchedule
+node/kind-worker tainted
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl taint nodes kind-worker2 apps=tipoa:NoSchedule
+node/kind-worker2 tainted
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl taint nodes kind-worker3 apps=tipoa:NoSchedule
+node/kind-worker3 tainted
+brunokuehne@MacBook-Pro-de-Bruno atividade04 % kubectl get pod -o wide
+NAME                                 READY   STATUS    RESTARTS   AGE   IP           NODE           NOMINATED NODE   READINESS GATES
+apache-deployment-5797574488-5w4n6   1/1     Running   0          28s   10.244.5.5   kind-worker4   <none>           <none>
+apache-deployment-5797574488-6btwj   1/1     Running   0          28s   10.244.5.4   kind-worker4   <none>           <none>
+apache-deployment-5797574488-d2gnr   1/1     Running   0          28s   10.244.4.5   kind-worker5   <none>           <none>
+apache-deployment-5797574488-m6ntm   1/1     Running   0          28s   10.244.4.4   kind-worker5   <none>           <none>
+apache-deployment-5797574488-m8lht   1/1     Running   0          28s   10.244.4.6   kind-worker5   <none>           <none>
+nginx-deployment-7795456695-d887p    1/1     Running   0          18s   10.244.3.7   kind-worker3   <none>           <none>
+nginx-deployment-7795456695-kqxxq    1/1     Running   0          18s   10.244.2.8   kind-worker2   <none>           <none>
+nginx-deployment-7795456695-pbntg    1/1     Running   0          18s   10.244.1.8   kind-worker    <none>           <none>
+nginx-deployment-7795456695-tpwjc    1/1     Running   0          18s   10.244.1.7   kind-worker    <none>           <none>
+nginx-deployment-7795456695-vv874    1/1     Running   0          18s   10.244.3.8   kind-worker3   <none>           <none>
